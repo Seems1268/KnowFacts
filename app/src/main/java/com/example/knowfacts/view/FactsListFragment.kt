@@ -75,15 +75,17 @@ class FactsListFragment : Fragment() {
 
         activity?.title = factsData.title
 
-        factsAdapter = FactsListAdapter(factsData.rows)
+        activity?.let {
+            factsAdapter = FactsListAdapter(factsData.rows, it)
 
-        with(binding.recyclerview) {
-            layoutManager = LinearLayoutManager(activity)
-            itemAnimator = DefaultItemAnimator()
-            adapter = factsAdapter
+            with(binding.recyclerview) {
+                layoutManager = LinearLayoutManager(activity)
+                itemAnimator = DefaultItemAnimator()
+                adapter = factsAdapter
+            }
+
+            factsAdapter.notifyDataSetChanged()
         }
-
-        factsAdapter.notifyDataSetChanged()
 
     }
 
