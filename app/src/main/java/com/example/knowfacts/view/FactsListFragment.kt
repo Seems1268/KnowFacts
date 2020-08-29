@@ -1,5 +1,9 @@
 package com.example.knowfacts.view
 
+/**
+ * Created by Seema Savadi on 28/08/20.
+ */
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,11 +21,14 @@ import com.example.knowfacts.databinding.FactsListFragmentBinding
 import com.example.knowfacts.model.Facts
 import timber.log.Timber
 
+/**
+ * Fragment presents the main UI of the application i.e. recyclerview with facts list data.
+ */
 class FactsListFragment : Fragment() {
 
     private lateinit var binding: FactsListFragmentBinding
     private lateinit var viewModel: FactsListViewModel
-    private lateinit var factsData: Facts
+    private var factsData: Facts? = null
     private lateinit var factsAdapter: FactsListAdapter
 
     companion object {
@@ -34,6 +41,8 @@ class FactsListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        Timber.i("onCreateView")
 
         binding = DataBindingUtil.inflate(inflater, R.layout.facts_list_fragment, container, false)
         binding.lifecycleOwner = this
@@ -55,39 +64,54 @@ class FactsListFragment : Fragment() {
         return binding.root
     }
 
-
+    /**
+     * Observes the facts data fetched from ViewModel and updates the UI.
+     */
     private fun getFactsList() {
 
         viewModel.fetchFactsData().observe(viewLifecycleOwner, { facts: Facts? ->
 
             facts?.let {
                 factsData = it
-                Timber.d("got the data into frag " + factsData.rows[0].description)
+                Timber.d("got the data into frag %s", factsData?.rows?.get(0)?.description)
                 binding.swipeLayout.isRefreshing = false
+                initUI()
+            } ?: run {
                 initUI()
             }
 
         })
-
     }
 
+    /**
+     * Method initializes the recyclerview if the facts data is available using adapter else displays the error message.
+     */
     private fun initUI() {
 
-        activity?.title = factsData.title
+        factsData?.let { facts ->
 
-        activity?.let {
-            factsAdapter = FactsListAdapter(factsData.rows, it)
+            binding.swipeLayout.visibility = View.VISIBLE
+            binding.errorMessage.visibility = View.GONE
 
-            with(binding.recyclerview) {
-                layoutManager = LinearLayoutManager(activity)
-                itemAnimator = DefaultItemAnimator()
-                adapter = factsAdapter
+            activity?.title = facts.title
+
+            activity?.let {
+                factsAdapter = FactsListAdapter(facts.rows, it)
+
+                with(binding.recyclerview) {
+                    layoutManager = LinearLayoutManager(activity)
+                    itemAnimator = DefaultItemAnimator()
+                    adapter = factsAdapter
+                }
+
+                factsAdapter.notifyDataSetChanged()
             }
 
-            factsAdapter.notifyDataSetChanged()
+        } ?: run {
+            binding.swipeLayout.isRefreshing = false
+            binding.swipeLayout.visibility = View.GONE
+            binding.errorMessage.visibility = View.VISIBLE
         }
 
     }
-
-
 }

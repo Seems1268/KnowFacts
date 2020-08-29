@@ -1,5 +1,9 @@
 package com.example.knowfacts
 
+/**
+ * Created by Seema Savadi on 28/08/20.
+ */
+
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,6 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.knowfacts.databinding.FactListItemBinding
 import com.example.knowfacts.model.Info
+import timber.log.Timber
+
+/**
+ * A custom recyclerview adapter to load the data into the list.
+ */
 
 class FactsListAdapter(private val facts: List<Info>, private val context: Context) :
     RecyclerView.Adapter<FactsListAdapter.FactsViewHolder>() {
@@ -14,12 +23,15 @@ class FactsListAdapter(private val facts: List<Info>, private val context: Conte
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactsViewHolder {
 
-        val inflater = LayoutInflater.from(parent.context)
+        Timber.i("OnCreateViewHolder")
 
+        val inflater = LayoutInflater.from(parent.context)
         return FactsViewHolder(FactListItemBinding.inflate(inflater, parent, false))
     }
 
     override fun onBindViewHolder(holder: FactsViewHolder, position: Int) {
+        Timber.i("onBindViewHolder")
+
         facts.getOrNull(position)?.let { fact ->
             holder.bind(fact)
         }
@@ -27,10 +39,14 @@ class FactsListAdapter(private val facts: List<Info>, private val context: Conte
 
     override fun getItemCount(): Int = facts.size
 
-    inner class FactsViewHolder(val binding: FactListItemBinding) :
+    /**
+     * ViewHolder for the list item.
+     */
+    inner class FactsViewHolder(private val binding: FactListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(fact: Info) {
+            Timber.i("bind")
 
             with(binding) {
                 factTitle.text =
