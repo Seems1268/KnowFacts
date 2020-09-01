@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recycler_margin_top">10dp</dimen>
+    <dimen name="errorMsg_margin_top">50dp</dimen>
+    <dimen name="titleSize">20sp</dimen>
+    <dimen name="cardView_margin">8dp</dimen>
+    <dimen name="cardView_elevation">0.5dp</dimen>
+    <dimen name="cardView_corner_radius">1dp</dimen>
+    <dimen name="title_padding_start">8dp</dimen>
+    <dimen name="title_padding_end">8dp</dimen>
+    <dimen name="layout_padding_top">5dp</dimen>
+    <dimen name="description_width">200dp</dimen>
+    <dimen name="descriptionSize">16sp</dimen>
+    <dimen name="description_margin_end">5dp</dimen>
+    <dimen name="description_padding">8dp</dimen>
+    <dimen name="description_padding_end">5dp</dimen>
+    <dimen name="image_height">100dp</dimen>
+    <dimen name="image_width">100dp</dimen>
+    <dimen name="image_padding_bottom">8dp</dimen>
+
+</resources>

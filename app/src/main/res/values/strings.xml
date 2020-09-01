@@ -3,4 +3,7 @@
     <string name="no_title">No Title</string>
     <string name="no_description">No Description</string>
     <string name="error_message">Sorry, no facts are available at this moment.</string>
+    <string name="no_network_error_message">No internet connectivity.</string>
+    <string name="image_contentDescription">Image showing fact.</string>
+    <string name="chevron_right_contentDescription">Click to move right.</string>
 </resources>

@@ -31,7 +31,7 @@ class MainActivityTest {
     @get:Rule
     val rule = activityScenarioRule<MainActivity>()
 
-    lateinit var scenario: ActivityScenario<MainActivity>
+    private lateinit var scenario: ActivityScenario<MainActivity>
 
 
     @Before

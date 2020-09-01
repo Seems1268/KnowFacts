@@ -10,15 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.knowfacts.App
 import com.example.knowfacts.FactsListAdapter
 import com.example.knowfacts.R
 import com.example.knowfacts.databinding.FactsListFragmentBinding
 import com.example.knowfacts.model.Facts
+import com.example.knowfacts.network.NetworkUtil
 import timber.log.Timber
 
 /**
@@ -27,9 +27,13 @@ import timber.log.Timber
 class FactsListFragment : Fragment() {
 
     private lateinit var binding: FactsListFragmentBinding
-    private lateinit var viewModel: FactsListViewModel
     private var factsData: Facts? = null
     private lateinit var factsAdapter: FactsListAdapter
+
+    private val viewModel by viewModels<FactsListViewModel>()
+    private var errorMessage = MutableLiveData<String>().apply {
+        value = ""
+    }
 
     companion object {
         @JvmStatic
@@ -47,12 +51,6 @@ class FactsListFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.facts_list_fragment, container, false)
         binding.lifecycleOwner = this
 
-        val factory: ViewModelProvider.Factory = AndroidViewModelFactory(App())
-
-        viewModel = ViewModelProvider(this, factory).get(FactsListViewModel::class.java).apply {
-
-            lifecycle.addObserver(this)
-        }
 
         getFactsList()
 
@@ -64,23 +62,36 @@ class FactsListFragment : Fragment() {
         return binding.root
     }
 
+
     /**
      * Observes the facts data fetched from ViewModel and updates the UI.
      */
     private fun getFactsList() {
 
-        viewModel.fetchFactsData().observe(viewLifecycleOwner, { facts: Facts? ->
+        context?.let {
+            if (NetworkUtil.isInternetAvailable(it)) {
+                viewModel.fetchFactsData()?.observe(viewLifecycleOwner, { facts: Facts? ->
 
-            facts?.let {
-                factsData = it
-                Timber.d("got the data into frag %s", factsData?.rows?.get(0)?.description)
-                binding.swipeLayout.isRefreshing = false
-                initUI()
-            } ?: run {
-                initUI()
+                    facts?.let { facts ->
+                        factsData = facts
+                        Timber.d("got the data into frag %s", factsData?.rows?.get(0)?.description)
+                        binding.swipeLayout.isRefreshing = false
+                        initUI()
+
+                    } ?: run {
+                        errorMessage.value = it.getString(R.string.error_message)
+                        displayError()
+                    }
+
+                }) ?: run {
+                    errorMessage.value = it.getString(R.string.error_message)
+                    displayError()
+                }
+            } else {
+                errorMessage.value = it.getString(R.string.no_network_error_message)
+                displayError()
             }
-
-        })
+        }
     }
 
     /**
@@ -96,22 +107,25 @@ class FactsListFragment : Fragment() {
             activity?.title = facts.title
 
             activity?.let {
-                factsAdapter = FactsListAdapter(facts.rows, it)
+                facts.rows?.let { rows ->
+                    factsAdapter = FactsListAdapter(rows, it)
 
-                with(binding.recyclerview) {
-                    layoutManager = LinearLayoutManager(activity)
-                    itemAnimator = DefaultItemAnimator()
-                    adapter = factsAdapter
+                    with(binding.recyclerview) {
+                        layoutManager = LinearLayoutManager(activity)
+                        itemAnimator = DefaultItemAnimator()
+                        adapter = factsAdapter
+                    }
+
+                    factsAdapter.notifyDataSetChanged()
                 }
-
-                factsAdapter.notifyDataSetChanged()
             }
-
-        } ?: run {
-            binding.swipeLayout.isRefreshing = false
-            binding.swipeLayout.visibility = View.GONE
-            binding.errorMessage.visibility = View.VISIBLE
         }
+    }
 
+    private fun displayError() {
+        binding.swipeLayout.isRefreshing = false
+        binding.swipeLayout.visibility = View.GONE
+        binding.errorMessage.visibility = View.VISIBLE
+        binding.errorMessage.text = errorMessage.value
     }
 }

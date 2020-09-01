@@ -19,7 +19,9 @@ import timber.log.Timber
 class FactsListViewModel(context: Application) : AndroidViewModel(context), LifecycleObserver {
 
     private var disposable: Disposable? = null
-    private var factsData = MutableLiveData<Facts>()
+
+    //private var factsData = MutableLiveData<Facts>()
+    private var factsData: MutableLiveData<Facts>? = MutableLiveData<Facts>()
 
     /**
      * Instantiates one time service object.
@@ -31,7 +33,7 @@ class FactsListViewModel(context: Application) : AndroidViewModel(context), Life
     /**
      * Fetches the facts data using Retrofit Network library.
      */
-    fun fetchFactsData(): MutableLiveData<Facts> {
+    fun fetchFactsData(): MutableLiveData<Facts>? {
 
         disposable =
             getFactsDataService.getFactsList()
@@ -40,14 +42,15 @@ class FactsListViewModel(context: Application) : AndroidViewModel(context), Life
                 .subscribe(
                     { response ->
                         response?.let {
-                            factsData.value = it
-                            Timber.d("fact title is %s", factsData.value?.title)
-                            Timber.d(factsData.value.toString())
+                            factsData?.value = it
+                            Timber.d("fact title is %s", factsData?.value?.title)
+                            Timber.d(factsData?.value.toString())
                         }
                     },
                     { error ->
                         error?.let {
                             Timber.e(it)
+                            factsData = null
                         }
                     }
                 )

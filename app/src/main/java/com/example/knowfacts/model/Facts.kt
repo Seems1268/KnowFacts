@@ -7,6 +7,6 @@ package com.example.knowfacts.model
 /**
  * Data classes to parse the API responses into.
  */
-data class Facts(val title: String, val rows: List<Info>)
+data class Facts(val title: String?, val rows: List<Info>?)
 
-data class Info(val title: String, val description: String, val imageHref: String)
+data class Info(val title: String?, val description: String?, val imageHref: String?)

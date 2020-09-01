@@ -50,7 +50,9 @@ class FactsListAdapter(private val facts: List<Info>, private val context: Conte
 
             with(binding) {
                 factTitle.text =
-                    if (fact.title.isNullOrEmpty()) context.getString(R.string.no_title) else fact.title
+                    if (fact.title.isNullOrEmpty()) context.getString(R.string.no_title) else {
+                        fact.title
+                    }
                 factDescription.text =
                     if (fact.description.isNullOrEmpty()) context.getString(R.string.no_description) else fact.description
 
