@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="recycler_margin_top">10dp</dimen>
-    <dimen name="errorMsg_margin_top">50dp</dimen>
+    <dimen name="errorMsg_padding">6dp</dimen>
     <dimen name="titleSize">20sp</dimen>
     <dimen name="cardView_margin">8dp</dimen>
     <dimen name="cardView_elevation">0.5dp</dimen>

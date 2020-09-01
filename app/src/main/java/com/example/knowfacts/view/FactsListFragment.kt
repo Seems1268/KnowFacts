@@ -21,6 +21,7 @@ import com.example.knowfacts.model.Facts
 import com.example.knowfacts.network.NetworkUtil
 import timber.log.Timber
 
+
 /**
  * Fragment presents the main UI of the application i.e. recyclerview with facts list data.
  */
@@ -31,6 +32,7 @@ class FactsListFragment : Fragment() {
     private lateinit var factsAdapter: FactsListAdapter
 
     private val viewModel by viewModels<FactsListViewModel>()
+
     private var errorMessage = MutableLiveData<String>().apply {
         value = ""
     }
@@ -47,6 +49,9 @@ class FactsListFragment : Fragment() {
     ): View? {
 
         Timber.i("onCreateView")
+
+        lifecycle.addObserver(viewModel)
+
 
         binding = DataBindingUtil.inflate(inflater, R.layout.facts_list_fragment, container, false)
         binding.lifecycleOwner = this
@@ -70,10 +75,12 @@ class FactsListFragment : Fragment() {
 
         context?.let {
             if (NetworkUtil.isInternetAvailable(it)) {
-                viewModel.fetchFactsData()?.observe(viewLifecycleOwner, { facts: Facts? ->
+                viewModel.fetchFactsData()
 
-                    facts?.let { facts ->
-                        factsData = facts
+                viewModel.factsData.observe(viewLifecycleOwner, { facts: Facts? ->
+
+                    facts?.let {
+                        factsData = it
                         Timber.d("got the data into frag %s", factsData?.rows?.get(0)?.description)
                         binding.swipeLayout.isRefreshing = false
                         initUI()
@@ -83,10 +90,7 @@ class FactsListFragment : Fragment() {
                         displayError()
                     }
 
-                }) ?: run {
-                    errorMessage.value = it.getString(R.string.error_message)
-                    displayError()
-                }
+                })
             } else {
                 errorMessage.value = it.getString(R.string.no_network_error_message)
                 displayError()
@@ -101,7 +105,7 @@ class FactsListFragment : Fragment() {
 
         factsData?.let { facts ->
 
-            binding.swipeLayout.visibility = View.VISIBLE
+            binding.recyclerview.visibility = View.VISIBLE
             binding.errorMessage.visibility = View.GONE
 
             activity?.title = facts.title
@@ -117,6 +121,9 @@ class FactsListFragment : Fragment() {
                     }
 
                     factsAdapter.notifyDataSetChanged()
+                } ?: run {
+                    errorMessage.value = it.getString(R.string.error_message)
+                    displayError()
                 }
             }
         }
@@ -124,7 +131,7 @@ class FactsListFragment : Fragment() {
 
     private fun displayError() {
         binding.swipeLayout.isRefreshing = false
-        binding.swipeLayout.visibility = View.GONE
+        binding.recyclerview.visibility = View.GONE
         binding.errorMessage.visibility = View.VISIBLE
         binding.errorMessage.text = errorMessage.value
     }

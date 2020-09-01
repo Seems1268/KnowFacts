@@ -17,32 +17,41 @@
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_layout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="1"
-            android:visibility="visible">
+            android:layout_weight="1">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/recycler_margin_top"
-                android:clipToPadding="false"
-                android:scrollbars="vertical" />
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/recycler_margin_top"
+                    android:clipToPadding="false"
+                    android:scrollbars="vertical"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/errorMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/errorMsg_padding"
+                    android:paddingEnd="@dimen/errorMsg_padding"
+                    android:text="@string/error_message"
+                    android:textColor="@color/errorMsgText"
+                    android:textSize="@dimen/titleSize"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <TextView
-            android:id="@+id/errorMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/errorMsg_margin_top"
-            android:gravity="center"
-            android:text="@string/error_message"
-            android:textColor="@color/errorMsgText"
-            android:textSize="@dimen/titleSize"
-            android:textStyle="bold"
-            android:visibility="gone" />
     </LinearLayout>
 
 </layout>
