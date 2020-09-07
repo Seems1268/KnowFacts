@@ -53,7 +53,10 @@ class RetrofitCallTest {
             adapter = FactsListAdapter(rows, activity)
         }
 
-        assertThat("Adapter has correct number of facts.", adapter?.itemCount ?: 0 == facts.rows?.size ?: 0)
+        assertThat(
+            "Adapter has correct number of facts.",
+            adapter?.itemCount ?: 0 == facts.rows?.size ?: 0
+        )
     }
 
     @Test
