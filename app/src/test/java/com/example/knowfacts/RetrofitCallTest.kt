@@ -3,6 +3,7 @@ package com.example.knowfacts
 import com.example.knowfacts.model.Facts
 import com.example.knowfacts.model.Info
 import com.example.knowfacts.service.FactsDataService
+import com.example.knowfacts.ui.KnowFactsActivity
 import io.reactivex.Observable
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -22,7 +23,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class RetrofitCallTest {
 
-    private lateinit var activity: MainActivity
+    private lateinit var activity: KnowFactsActivity
 
     @Mock
     private lateinit var mockFactsDataService: FactsDataService
@@ -33,7 +34,7 @@ class RetrofitCallTest {
         MockitoAnnotations.initMocks(this)
 
         val controller = Robolectric.buildActivity(
-            MainActivity::class.java
+            KnowFactsActivity::class.java
         )
         activity = controller.get()
 
@@ -50,7 +51,10 @@ class RetrofitCallTest {
 
         var adapter: FactsListAdapter? = null
         facts.rows?.let { rows ->
-            adapter = FactsListAdapter(rows, activity)
+            adapter = FactsListAdapter(activity)
+            adapter?.let { adapter ->
+                adapter.facts = rows
+            }
         }
 
         assertThat(
@@ -68,7 +72,10 @@ class RetrofitCallTest {
 
         var adapter: FactsListAdapter? = null
         facts.rows?.let { rows ->
-            adapter = FactsListAdapter(rows, activity)
+            adapter = FactsListAdapter(activity)
+            adapter?.let { adapter ->
+                adapter.facts = rows
+            }
         }
 
         assertThat("Adapter has no data", adapter == null)

@@ -12,28 +12,23 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
- * Initializes the retrofit object and creates an implementation of the API endpoints defined by the service interface.
+ * Main entry point for network access. Call like `KnowFactsNetwork.knowfacts.getFactsList()`
  */
-class RetrofitInstance {
+object KnowFactsNetwork {
 
-    companion object {
+    private val okHttpClient = OkHttpClient().newBuilder()
+        .connectTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
+        .readTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
+        .writeTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
+        .build()
 
-        fun getService(): FactsDataService {
+    // Configure retrofit to parse JSON and use coroutines
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(Constants.BASE_URL)
+        .client(okHttpClient)
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
-            val okHttpClient = OkHttpClient().newBuilder()
-                .connectTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
-                .build()
-
-            val retrofit = Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .client(okHttpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-            return retrofit.create(FactsDataService::class.java)
-        }
-    }
-
+    val knowfacts: FactsDataService = retrofit.create(FactsDataService::class.java)
 }
