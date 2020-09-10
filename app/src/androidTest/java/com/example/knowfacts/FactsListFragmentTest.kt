@@ -11,6 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.example.knowfacts.network.NetworkUtil
+import com.example.knowfacts.ui.KnowFactsActivity
 import org.hamcrest.Matcher
 import org.junit.Rule
 import org.junit.Test
@@ -25,7 +26,7 @@ import org.junit.runner.RunWith
 class FactsListFragmentTest {
 
     @get:Rule
-    val activityTestRule = ActivityTestRule(MainActivity::class.java)
+    val activityTestRule = ActivityTestRule(KnowFactsActivity::class.java)
 
 
     @Test

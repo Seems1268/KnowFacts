@@ -1,47 +1,37 @@
-package com.example.knowfacts.view
+package com.example.knowfacts.repository
 
-/**
- * Created by Seema Savadi on 28/08/20.
- */
-
-import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
 import com.example.knowfacts.model.Facts
-import com.example.knowfacts.service.RetrofitInstance
+import com.example.knowfacts.service.KnowFactsNetwork
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
- * ViewModel class to fetch facts data using Network APIs.
+ * Created by Seema Savadi on 09/09/20.
  */
-class FactsListViewModel(context: Application) : AndroidViewModel(context), LifecycleObserver {
+
+/**
+ * Repository for fetching facts from the network.
+ */
+class FactsRepository {
 
     private var disposable: Disposable? = null
-
     var factsData = MutableLiveData<Facts>()
+    var isNetWorkError = MutableLiveData<Boolean>().apply { false }
 
-    /**
-     * Instantiates one time service object.
-     */
-    private val getFactsDataService by lazy {
-        RetrofitInstance.getService()
-    }
 
-    /**
-     * Fetches the facts data using Retrofit Network library.
-     */
-    fun fetchFactsData() {
-
+    fun refreshFacts() {
         disposable =
-            getFactsDataService.getFactsList()
+            KnowFactsNetwork.knowfacts.getFactsList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { response ->
                         response?.let {
                             factsData.postValue(it)
+                            isNetWorkError.value = false
                             Timber.d("fact title is %s", factsData.value?.title)
                             Timber.d(factsData.value.toString())
                         }
@@ -50,17 +40,13 @@ class FactsListViewModel(context: Application) : AndroidViewModel(context), Life
                         error?.let {
                             Timber.e(it)
                             factsData.postValue(null)
+                            isNetWorkError.value = true
                         }
                     }
                 )
-
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onPause() {
-        Timber.i("onPause")
+    fun clear() {
         disposable?.dispose()
     }
-
-
 }

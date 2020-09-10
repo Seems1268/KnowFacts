@@ -17,9 +17,20 @@ import timber.log.Timber
  * A custom recyclerview adapter to load the data into the list.
  */
 
-class FactsListAdapter(private val facts: List<Info>, private val context: Context) :
+class FactsListAdapter(private val context: Context) :
     RecyclerView.Adapter<FactsListAdapter.FactsViewHolder>() {
 
+    /**
+     * The facts that our Adapter will show
+     */
+    var facts: List<Info> = emptyList()
+        set(value) {
+            field = value
+
+            // Notify any registered observers that the data set has changed. This will cause every
+            // element in our RecyclerView to be invalidated.
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactsViewHolder {
 

@@ -12,6 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.example.knowfacts.ui.KnowFactsActivity
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -29,9 +30,9 @@ import org.junit.runner.RunWith
 class MainActivityTest {
 
     @get:Rule
-    val rule = activityScenarioRule<MainActivity>()
+    val rule = activityScenarioRule<KnowFactsActivity>()
 
-    private lateinit var scenario: ActivityScenario<MainActivity>
+    private lateinit var scenario: ActivityScenario<KnowFactsActivity>
 
 
     @Before
@@ -43,7 +44,7 @@ class MainActivityTest {
 
     @Test
     fun test_ActivityLaunched() {
-        onView(withId(R.id.fragmentContainer)).check(matches(isDisplayed()))
+        onView(withId(R.id.nav_host_fragment)).check(matches(isDisplayed()))
     }
 
     @After
